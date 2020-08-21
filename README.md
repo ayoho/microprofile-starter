@@ -2,33 +2,33 @@
 
 ## Maven
 
-### Basic lifecycle
+#### Basic lifecycle
 
-### CLI commands
+#### CLI commands
 
-### POM
+#### POM
 
 < walk through pom structure >
 
 
 ## Open Liberty
 
-### App server basics
+#### App server basics
 
-### Liberty Maven plugin
+#### Liberty Maven plugin
 
 < show plugin in pom.xml >
 
-### Server config
+#### Server config
 
 < show server.xml in src >
 
 
 ## REST
 
-### CRUD model
+#### CRUD model
 
-### HTTP methods
+#### HTTP methods
 
 < walk through code >
 
@@ -41,7 +41,7 @@
 
 < basic concepts - REST communication, multi language, 1 app per server, etc >
 
-### MicroProfile 
+#### MicroProfile 
 
 < walk through code >
 1. mp features in server.xml
