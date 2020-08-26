@@ -11,6 +11,8 @@
     <packaging>war</packaging>
     
     <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
         <http.port>9080</http.port>
         <https.port>9443</https.port>
         <app.name>${project.artifactId}</app.name>
