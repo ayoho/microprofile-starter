@@ -1,6 +1,6 @@
 # microprofile-starter
 
-Welcome to the MicroProfile starter application! This is a sample of what a basic microservice might look like. You can use this readme as a guide to walk you through this app and the technologies it uses.
+Welcome to the MicroProfile starter application! This is a sample of what a basic microservice might look like. It uses Maven to build a basic REST microservice on Open Liberty. Not familiar with Maven? Never heard of REST? No problem. This readme is meant to walk you through these technologies and concepts so you can gain a basic understanding of what they are. 
 
 ## Maven
 
