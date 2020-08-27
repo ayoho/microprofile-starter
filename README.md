@@ -133,14 +133,47 @@ In the output, you will see Maven compiling code and packaging the war file. Whe
 
 #### App server basics
 
+Open Liberty is a flexible web server runtime available to Java developers. It features an open framework for building fast and efficient cloud-native Java microservices. Liberty supports MicroProfile, Jakarta EE and Java EE, Spring Framework and Spring Boot.
+
 #### Liberty Maven plugin
 
-< show plugin in pom.xml >
+Maven can create and deploy application directly to an Open Liberty server using the Liberty Maven plug-in. To do so, Liberty Maven plug-in must be specified in the pom.xml under the build section. Let's take a look at an example of a defined pom.xml:
+
+```xml
+<plugin>
+    <groupId>io.openliberty.tools</groupId>
+    <artifactId>liberty-maven-plugin</artifactId>
+    <version>3.2</version>
+    <configuration>
+        <serverName>exampleServer</serverName>
+    </configuration>
+</plugin>
+```
+
+In the liberty-maven-plugin plug-in section, you can add a <configuration/> element to specify Open Liberty configuration details. For example, the <serverName/> field defines the name of the Open Liberty server that Maven creates. The example specified exampleServer as the value for <serverName/>. If the <serverName/> field is not included, the default value is defaultServer.
 
 #### Server config
 
-< show server.xml in src >
+Open Liberty uses the `server.xml` for configuration which is specified at the `src/main/liberty/config` (Refer to the project structure section above). Configuration for the application and the enablement of the different features are added into this `server.xml`. Lets take a look at an example 
 
+```xml
+<server description="Liberty server">
+    <featureManager>
+        <feature>microProfile-3.2</feature>
+    </featureManager>
+
+    <httpEndpoint host="*" httpPort="${default.http.port}" 
+        httpsPort="${default.https.port}" id="defaultHttpEndpoint"/>
+    
+    <webApplication location="starter-app.war" contextRoot="/"/>
+</server>
+```
+
+Features are specified in the system configuration files that are the server.xml file and any other included files. New features can be specified under `<featureManager>` within the `<feature>` and `</feature>` tags. In the above instance, `microProfile-3.2` is the only feature specified.
+
+The web application will use `httpPort` and `httpsPort` specified under `<httpEndpoint>` to start the application. Then you can access the app using these ports (default http port is 9080) like this `http://localhost:9080/<app name>/<servlet>`.
+
+All configurations that are related to the application can be configured in the `<webApplication>` section.  
 
 ## REST
 
