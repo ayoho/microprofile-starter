@@ -281,15 +281,48 @@ Another best practice of microservices is that each microservice has its own app
 
 So you have an idea for an application, from the GUI to the backend components. How many microservices should you have? Or in other words, how small does an app need to be to be considered a "micro" service? That is a very open ended question, and is really up to the developer. As a general rule, a microservice should perform one task and perform it well. A "task" might be "managing user accounts" or "maintaining the creation and lifecycle of a 'thing'". Likewise providing a front end interface to a user (GUI) could qualify as its own microservice.
 
+## MicroProfile
 
-#### MicroProfile
+So to recap the last section, microservices is an architectural style of developing multiple smaller stateless applications that communicate through REST APIs. Great!
 
-< walk through code >
-1. mp features in server.xml
+So... how do you actually DO that? Well... you need to right set of tools, and MicroProfile provides that.
+
+MicroProfile is an open source specification that is part of the Eclipse foundation. It provides a set of APIs and technologies for building microservices in enterprise Java, and focuses on creating solutions to the various problems that arise when you are creating microservices. For example, how can a microservice check if another microservice's API is available? You can use MicroProfile Health to "ping" that url and see if it is ready for use. What about if a call out to another microservice fails? You can use MicroProfile Fault Tolerance to retry the connection or run failover tasks. And how about security? How can you make secure calls to different apps without forcing a user to sign in again and again for each application? You can use MicroProfile JWT Authentication to pass a verified token on each request.
+
+Hopefully you are getting the picture. MicroProfile provides a developer with the tools necessary to navigate this microservice landscape.
+
+It's also worth noting that MicroProfile is a _specification_ which means it provides the APIs and the structure behind what these technologies should do. It's up to third party vendors of MicroProfile to create the actual implementation. Open Liberty, for example, provides those implementations along with other application servers and libraries.
+
+So let's see this in action using MicroProfile Health.
+
+1. Go into the `src/main/java/dev/microprofile/health` directory.
+
+In here you will see two java classes: `StarterLivenessCheck.java` and `StarterReadinessCheck.java`. These classes provide "health checks" for our applicaiton. Liveness meaning "is our application up?" and readiness meaning "is our service ready to be used?".
+
+2. Open `StarterLivenessCheck.java`
+
+This class implements the MicroProfile `HealthCheck` interface and its `call()` method which returns a `HealthCheckResponse`. This is basically boilerplate stuff that allows a developer to add in anything they want here to determine their app is "live." In this example, it is just returning "true".
+
+Also notice that this class is annotated with `@Liveness` which means that MicroProfile will call this class when performing liveness checks.
+
+3. If the server isn't already running, issue `mvn liberty:dev` on the command line from the directory containing the pom.xml.
+
+4. After the server is up, go here: http://localhost:9080/health
+
+You should see output similar to this:
+
+```
+{"checks":[{"data":{},"name":"StarterLivenessCheck","status":"UP"},{"data":{},"name":"StarterReadinessCheck","status":"UP"}],"status":"UP"}
+```
+
+We can see the response from the `StarterLivenessCheck` class showing that our status is "UP".
+
+MicroProfile has a lot of tools to offer and is constantly growing and evolving. Check out the links below for more information. Particularly, the the Open Liberty Guides site has a whole series of tutorials for using MicroProfile with Open Liberty. 
 
 ## Additional Resources
 
-- Link to OL site
-- Link to Maven doc
-- Link to Liberty Maven plugin
-- Link to OL guides
+Open Liberty - https://openliberty.io/
+Maven - https://maven.apache.org/what-is-maven.html
+Liberty Maven plugin - https://github.com/OpenLiberty/ci.maven
+Open Liberty Guides - https://openliberty.io/guides/
+MicroProfile - https://microprofile.io/
