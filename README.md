@@ -133,28 +133,36 @@ In the output, you will see Maven compiling code and packaging the war file. Whe
 
 #### App server basics
 
-Open Liberty is a flexible web server runtime available to Java developers. It features an open framework for building fast and efficient cloud-native Java microservices. Liberty supports MicroProfile, Jakarta EE and Java EE, Spring Framework and Spring Boot.
+Open Liberty is a flexible web server runtime available to Java developers. It features an open framework for building fast and efficient cloud-native Java microservices. Open Liberty supports MicroProfile, Jakarta EE and Java EE, Spring Framework and Spring Boot.
 
 #### Liberty Maven plugin
 
-Maven can create and deploy application directly to an Open Liberty server using the Liberty Maven plug-in. To do so, Liberty Maven plug-in must be specified in the pom.xml under the build section. Let's take a look at an example of a defined pom.xml:
+Maven can create and deploy applications directly to an Open Liberty server using the Liberty Maven plug-in. In fact, this plugin will even download, install, and configure an Open Liberty server for you automatically. You can just focus on your app code and let Maven take care of the rest. To use the Liberty Maven plug-in simply add it to the pom.xml under the plugins section.
+
+Let's see what this looks like in this app:
 
 ```xml
 <plugin>
     <groupId>io.openliberty.tools</groupId>
     <artifactId>liberty-maven-plugin</artifactId>
-    <version>3.2</version>
+    <version>3.2.1</version>
     <configuration>
-        <serverName>exampleServer</serverName>
+        <stripVersion>true</stripVersion>
+        <serverStartTimeout>120</serverStartTimeout>
+        <bootstrapProperties>
+            <default.http.port>${http.port}</default.http.port>
+            <default.https.port>${https.port}</default.https.port>
+            <app.context.root>${app.name}</app.context.root>
+        </bootstrapProperties>
     </configuration>
 </plugin>
 ```
 
-In the liberty-maven-plugin plug-in section, you can add a <configuration/> element to specify Open Liberty configuration details. For example, the <serverName/> field defines the name of the Open Liberty server that Maven creates. The example specified exampleServer as the value for <serverName/>. If the <serverName/> field is not included, the default value is defaultServer.
+By default, the Liberty Maven plugin will use the server.xml defined under `src/main/liberty/config` as the config file for the server. Additionally, you can set other properties called "bootstrap properties" for the server. These are basically just variables that are injected into the server.xml. Here you can see that we are setting a "default.http.port" property to the "http.port" that we configured at the top of the pom file.  
 
 #### Server config
 
-Open Liberty uses the `server.xml` for configuration which is specified at the `src/main/liberty/config` (Refer to the project structure section above). Configuration for the application and the enablement of the different features are added into this `server.xml`. Lets take a look at an example 
+Open Liberty uses a file called `server.xml` for most of its configuration which is specified at the `src/main/liberty/config` (Refer to the project structure section above). Configuration for the application and the enablement of the different features are added into this `server.xml`. Lets take a look at the server.xml for this app:
 
 ```xml
 <server description="Liberty server">
@@ -162,18 +170,18 @@ Open Liberty uses the `server.xml` for configuration which is specified at the `
         <feature>microProfile-3.2</feature>
     </featureManager>
 
-    <httpEndpoint host="*" httpPort="${default.http.port}" 
+    <httpEndpoint host="*" httpPort="${default.http.port}"
         httpsPort="${default.https.port}" id="defaultHttpEndpoint"/>
-    
+
     <webApplication location="starter-app.war" contextRoot="/"/>
 </server>
 ```
 
-Features are specified in the system configuration files that are the server.xml file and any other included files. New features can be specified under `<featureManager>` within the `<feature>` and `</feature>` tags. In the above instance, `microProfile-3.2` is the only feature specified.
+The first thing you will notice is the `<featureManager>` block. This is where you set any technology implementations or "features" that you want Open Liberty to load. In this sample, the "microProfile-3.2" feature is set. This is a parent feature that Open Liberty provides that starts up a whole suite of other features. For more info on Open Liberty features check out this link: https://openliberty.io/docs/20.0.0.8/reference/feature/feature-overview.html
 
-The web application will use `httpPort` and `httpsPort` specified under `<httpEndpoint>` to start the application. Then you can access the app using these ports (default http port is 9080) like this `http://localhost:9080/<app name>/<servlet>`.
+After the feature definitions, any other configuration you want for your server can be specified. As you can see, we are defining some endpoint information like our hostname and ports. (Notice how the values are the bootstrap variables we configured in our pom). Additionally, this app is setting some webApplication config like to name of the app being deployed to this server.
 
-All configurations that are related to the application can be configured in the `<webApplication>` section.  
+For more information on Open Liberty config, check this out: https://openliberty.io/docs/20.0.0.8/reference/config/server-configuration-overview.html
 
 ## REST
 
@@ -246,12 +254,33 @@ The  `@GET` annotation means that this Java method is accessible at our URL path
 You should see the "StarterResource response" string printed to the screen.
 
 
-Next we are going to look at how REST APIs are used for communication between apps - an important principle on microservices.
+Next we are going to look at how REST APIs are used for communication between apps - an important principle of microservices.
 
 
 ## Microservices
 
-< basic concepts - REST communication, multi language, 1 app per server, etc >
+So now that we have our build tool (Maven), our server runtime (Open Liberty) and a basic understanding of REST, how exactly do we develop our application?
+
+Traditionally, apps were built as "Monoliths" which basically means that every aspect and component of the app was packaged into one runnable archive. This has some inherent problems such as, what if you need to scale out just one component? In that case, you need to scale out the entire app, which can take up a lot of resources. Another issue is development itself. Typically, teams manage different app components. The more this grows, the more people you have developing in the same codebase which can get pretty hairy....
+
+Enter microservices. This is an architectural style that distributes the components of one application into multiple smaller applications. Each app is its own entity with its own database, server runtime and resources. These separate apps can then interact with each other to form a fully functioning app experience, and they communicate using (you guessed it).... REST.
+
+#### REST and statelessness
+
+One of the basic principles of microservices is communication using REST APIs. Why REST? Well, as we mentioned, microservices are designed to be their own separate applications. As a result, they are stateless, and do not know, or really care about, what the other apps are doing. Statelessness matters because there is no guarantee that a particular microservice will be up and available. If an application is restarted, it must not affect the functionality of the other apps.
+
+#### Multi-lingual
+
+With monoliths, all components of the app must be written in the same language. This is not the case for microservices. You can have one application written in Java talking to another application written in NodeJS or a frontend written in Angular. As long as the language is able to communicate over HTTP it can interact with any other applications.
+
+#### One server per microservice
+
+Another best practice of microservices is that each microservice has its own application server. This further separates the services and allows them to truly function as separate applications.
+
+#### How small?
+
+So you have an idea for an application, from the GUI to the backend components. How many microservices should you have? Or in other words, how small does an app need to be to be considered a "micro" service? That is a very open ended question, and is really up to the developer. As a general rule, a microservice should perform one task and perform it well. A "task" might be "managing user accounts" or "maintaining the creation and lifecycle of a 'thing'". Likewise providing a front end interface to a user (GUI) could qualify as its own microservice.
+
 
 #### MicroProfile
 
