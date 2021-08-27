@@ -19,7 +19,7 @@ public class StarterLivenessCheck implements HealthCheck {
     @Override
     public HealthCheckResponse call() {
         boolean up = isAlive();
-        return HealthCheckResponse.named(this.getClass().getSimpleName()).state(up).build();
+        return HealthCheckResponse.named(this.getClass().getSimpleName()).status(up).build();
     }
     
 }

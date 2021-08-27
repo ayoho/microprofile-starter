@@ -1,6 +1,6 @@
 <server description="Liberty server">
     <featureManager>
-        <feature>microProfile-3.2</feature>
+        <feature>microProfile-4.0</feature>
     </featureManager>
 
     <httpEndpoint host="*" httpPort="${default.http.port}" 
