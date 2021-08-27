@@ -321,8 +321,8 @@ MicroProfile has a lot of tools to offer and is constantly growing and evolving.
 
 ## Additional Resources
 
-Open Liberty - https://openliberty.io/
-Maven - https://maven.apache.org/what-is-maven.html
-Liberty Maven plugin - https://github.com/OpenLiberty/ci.maven
-Open Liberty Guides - https://openliberty.io/guides/
-MicroProfile - https://microprofile.io/
+* Open Liberty - https://openliberty.io/
+* Maven - https://maven.apache.org/what-is-maven.html
+* Liberty Maven plugin - https://github.com/OpenLiberty/ci.maven
+* Open Liberty Guides - https://openliberty.io/guides/
+* MicroProfile - https://microprofile.io/
