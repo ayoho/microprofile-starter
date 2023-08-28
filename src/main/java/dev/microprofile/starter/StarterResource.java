@@ -1,13 +1,13 @@
 package dev.microprofile.starter;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 @Path("/resource")
 public class StarterResource {
 
     @GET
     public String getRequest() {
-        return "Hello World!";
+        return "Hello, world!";
     }
 }
